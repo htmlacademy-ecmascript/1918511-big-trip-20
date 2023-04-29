@@ -3,7 +3,7 @@ export const TRAVEL_WAYPOINTS = [
   'Chamonix',
   'Geneva',
   'New York',
-  'Moskow',
+  'Moscow',
   'Tokyo',
 ];
 

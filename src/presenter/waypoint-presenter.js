@@ -17,7 +17,7 @@ export default class WaypointPresenter{
 
     render(this.eventComponent, this.waypointContainer);
     render(new EditFormView({waypoint: this.waypoints[0]}), this.eventComponent.getElement(), RenderPosition.AFTERBEGIN);
-    for (let i = 0; i < this.waypoints.length; i++) {
+    for (let i = 1; i < this.waypoints.length; i++) {
       render(new WaypointView({waypoint: this.waypoints[i]}), this.eventComponent.getElement());
     }
   }
