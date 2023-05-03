@@ -1,5 +1,5 @@
 
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, countDates } from '../utils.js';
 
 const HOURS_MINS = 'HH:mm';
@@ -49,23 +49,27 @@ function createWaypointElement(data) {
 
 }
 
-export default class WaypointView {
-  constructor ({waypoint}) {
-    this.waypoint = waypoint;
+export default class WaypointView extends AbstractView {
+  #waypoint = null;
+  #onEditClick = null;
+
+  constructor ({waypoint, onEditClick}) {
+    super();
+    this.#waypoint = waypoint;
+    this.#onEditClick = onEditClick;
+
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#onClickEvt);
   }
 
-  getTemplate() {
-    return createWaypointElement(this.waypoint);
-  }
+  #onClickEvt = (evt) => {
+    evt.preventDefault();
+    this.#onEditClick();
+  };
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createWaypointElement(this.#waypoint);
   }
 }
+

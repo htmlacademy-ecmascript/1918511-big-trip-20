@@ -2,7 +2,7 @@ import { WAYPOINT_OPTIONS } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 
-function createEditForm(data) {
+function createEditNoPhotoForm(data) {
 
   const { destination, offers,type} = data;
 
@@ -87,20 +87,13 @@ function createEditForm(data) {
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${destination.description}</p>
 
-
-    ${destination.pictures.length > 0
-    ? `<div class="event__photos-container"><div class="event__photos-tape">
-    ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`)}
-    </div></div>`
-    : ''}
-
       </section>
     </section>
   </form>
 </li>`;
 }
 
-export default class EditFormView extends AbstractView {
+export default class EditNoPhotoFormView extends AbstractView {
 
   #waypoint = null;
   #handleSubmit = null;
@@ -136,6 +129,6 @@ export default class EditFormView extends AbstractView {
 
 
   get template () {
-    return createEditForm(this.#waypoint);
+    return createEditNoPhotoForm(this.#waypoint);
   }
 }
