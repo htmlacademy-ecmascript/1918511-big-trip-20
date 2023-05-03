@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
 import { WAYPOINT_OPTIONS } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 function createEditForm(data) {
@@ -93,23 +93,16 @@ function createEditForm(data) {
 </li>`;
 }
 
-export default class EditFormView {
+export default class EditFormView extends AbstractView {
+
+  #waypoint = null;
+
   constructor ({waypoint}) {
-    this.waypoint = waypoint;
+    super();
+    this.#waypoint = waypoint;
   }
 
-  getTemplate() {
-    return createEditForm(this.waypoint);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template () {
+    return createEditForm(this.#waypoint);
   }
 }
