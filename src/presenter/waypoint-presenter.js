@@ -5,20 +5,23 @@ import EventsListView from '../view/events-list-view.js';
 
 
 export default class WaypointPresenter{
-  eventComponent = new EventsListView();
+  #eventComponent = new EventsListView();
+  #waypoints = [];
+  #waypointContainer = null;
+  #waypointModel = null;
 
   constructor({waypointContainer, waypointModel}) {
-    this.waypointContainer = waypointContainer;
-    this.waypointModel = waypointModel;
+    this.#waypointContainer = waypointContainer;
+    this.#waypointModel = waypointModel;
   }
 
   init() {
-    this.waypoints = [...this.waypointModel.getWaypoints()];
+    this.#waypoints = [...this.#waypointModel.points];
 
-    render(this.eventComponent, this.waypointContainer);
-    render(new EditFormView({waypoint: this.waypoints[0]}), this.eventComponent.element, RenderPosition.AFTERBEGIN);
-    for (let i = 1; i < this.waypoints.length; i++) {
-      render(new WaypointView({waypoint: this.waypoints[i]}), this.eventComponent.element);
+    render(this.#eventComponent, this.#waypointContainer);
+    render(new EditFormView({waypoint: this.#waypoints[0]}), this.#eventComponent.element, RenderPosition.AFTERBEGIN);
+    for (let i = 1; i < this.#waypoints.length; i++) {
+      render(new WaypointView({waypoint: this.#waypoints[i]}), this.#eventComponent.element);
     }
   }
 }

@@ -5,17 +5,21 @@ import TripSortView from '../view/sorting-view.js';
 
 export default class MainPresenter {
 
+  #tripMain = null;
+  #tripControlsFilters = null;
+  #tripEventsSection = null;
+
   constructor({tripMain, tripControlsFiltres, tripEventsSection}) {
-    this.tripMain = tripMain;
-    this.tripControlsFilters = tripControlsFiltres;
-    this.tripEventsSection = tripEventsSection;
+    this.#tripMain = tripMain;
+    this.#tripControlsFilters = tripControlsFiltres;
+    this.#tripEventsSection = tripEventsSection;
   }
 
   init() {
 
-    render(new TripInfoView(), this.tripMain, RenderPosition.AFTERBEGIN);
-    render(new TripFiltersView(), this.tripControlsFilters, RenderPosition.AFTERBEGIN);
-    render(new TripSortView(), this.tripEventsSection);
+    render(new TripInfoView(), this.#tripMain, RenderPosition.AFTERBEGIN);
+    render(new TripFiltersView(), this.#tripControlsFilters, RenderPosition.AFTERBEGIN);
+    render(new TripSortView(), this.#tripEventsSection);
   }
 
 }
