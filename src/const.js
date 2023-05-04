@@ -18,3 +18,10 @@ export const WAYPOINT_OPTIONS = [
   'Sightseeing',
   'Restaurant',
 ];
+
+export const FILTERS_OPTIONS = [
+  'Everything',
+  'Future',
+  'Present',
+  'Past'
+];
