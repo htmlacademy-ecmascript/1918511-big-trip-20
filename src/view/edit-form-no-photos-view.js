@@ -93,7 +93,7 @@ function createEditNoPhotoForm(data) {
 </li>`;
 }
 
-export default class EditNoPhotoFormView extends AbstractView {
+export default class EditFormNoPhotosView extends AbstractView {
 
   #waypoint = null;
   #handleSubmit = null;

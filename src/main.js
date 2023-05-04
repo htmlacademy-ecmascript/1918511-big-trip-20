@@ -7,7 +7,7 @@ const tripControlsFiltersElement = document.querySelector('.trip-controls__filte
 const tripEventsSection = document.querySelector('.trip-events');
 
 const waypointModel = new WaypointModel();
-const mainPresenter = new MainPresenter({tripMain: tripMainElement, tripControlsFiltres: tripControlsFiltersElement, tripEventsSection: tripEventsSection});
+const mainPresenter = new MainPresenter({tripMain: tripMainElement, tripControlsFiltres: tripControlsFiltersElement, tripEventsSection: tripEventsSection, waypointModel});
 const waypointPresenter = new WaypointPresenter({waypointContainer: tripEventsSection, waypointModel});
 
 mainPresenter.init();
