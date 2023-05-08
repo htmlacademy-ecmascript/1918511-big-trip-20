@@ -25,3 +25,8 @@ export const FILTERS_OPTIONS = [
   'Present',
   'Past'
 ];
+
+export const MODE = {
+  opened: 'opened',
+  closed: 'closed',
+};
