@@ -1,13 +1,15 @@
-import { render , replace} from '../framework/render.js';
+import { render } from '../framework/render.js';
 // import EditFormView from '../view/edit-form-view.js';
-import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
-import WaypointView from '../view/waypoint-view.js';
+// import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
+// import WaypointView from '../view/waypoint-view.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
+import SingleWaypointPresenter from './single-waypoint-presenter.js';
 
 export default class WaypointPresenter{
   #eventComponent = new EventsListView();
   #waypoints = [];
+  #waypointsInst = [];
   #waypointContainer = null;
   #waypointModel = null;
 
@@ -23,50 +25,25 @@ export default class WaypointPresenter{
     }
     render(this.#eventComponent, this.#waypointContainer);
     for (let i = 0; i < this.#waypoints.length; i++) {
-      this.#renderWaypoint(this.#waypoints[i]);
+      const singleWaypointPresenter = new SingleWaypointPresenter(this.#waypoints[i], this.changeFav);
+      this.#waypointsInst.push(singleWaypointPresenter);
+      singleWaypointPresenter.renderWaypont(this.#eventComponent.element);
     }
   }
 
-  #renderWaypoint(waypoint) {
-    const ecsKeydownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditToInfo();
-        document.removeEventListener('keydown', ecsKeydownHandler);
+  changeFav = (id) => {
+    this.#waypoints = this.#waypoints.map((elem) => {
+      if (elem.id === id) {
+        elem.isFavourite = !elem.isFavourite;
+        return elem;
       }
-    };
-
-    const waypointComponent = new WaypointView ({
-      waypoint,
-      onEditClick: () => {
-        replaceInfoToEdit();
-        document.addEventListener('keydown', ecsKeydownHandler);
-      }
+      return elem;
     });
-
-    const waypointEditComponent = new EditFormNoPhotosView({
-      waypoint,
-      onFormSubmit: () => {
-        replaceEditToInfo();
-        document.removeEventListener('keydown', ecsKeydownHandler);
-      },
-      onFormCancel: () => {
-        replaceEditToInfo();
-        document.removeEventListener('keydown', ecsKeydownHandler);
-      }
+    this.#waypointsInst.forEach((elem) => {
+      elem.destroy();
     });
-
-    function replaceInfoToEdit() {
-      replace(waypointEditComponent, waypointComponent);
-    }
-
-    function replaceEditToInfo() {
-      replace(waypointComponent, waypointEditComponent);
-    }
-
-    render(waypointComponent, this.#eventComponent.element);
-  }
-
+    this.init();
+  };
 }
 
 
