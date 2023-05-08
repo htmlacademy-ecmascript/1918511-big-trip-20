@@ -1,15 +1,18 @@
 import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
 import WaypointView from '../view/waypoint-view.js';
 import { render, remove, replace } from '../framework/render.js';
+import { MODE } from '../const.js';
 
 export default class SingleWaypointPresenter {
   #waypointComponent = null;
   #waypointEditComponent = null;
   #elem = null;
+  #state = MODE.closed;
 
-  constructor(elem, changeFav) {
+  constructor(elem, changeFav, resetToClosed) {
     this.#elem = elem;
     this.changeFav = changeFav;
+    this.resetToClosed = resetToClosed;
 
     const ecsKeydownHandler = (evt) => {
       if (evt.key === 'Escape') {
@@ -22,6 +25,7 @@ export default class SingleWaypointPresenter {
     this.#waypointComponent = new WaypointView ({
       waypoint: this.#elem,
       onEditClick: () => {
+        this.resetToClosed(this.#elem.id);
         this.replaceInfoToEdit();
         document.addEventListener('keydown', ecsKeydownHandler);
       },
@@ -46,10 +50,12 @@ export default class SingleWaypointPresenter {
 
   replaceEditToInfo() {
     replace(this.#waypointComponent, this.#waypointEditComponent);
+    this.#state = MODE.closed;
   }
 
   replaceInfoToEdit() {
     replace(this.#waypointEditComponent, this.#waypointComponent);
+    this.#state = MODE.opened;
   }
 
   destroy() {
@@ -59,5 +65,11 @@ export default class SingleWaypointPresenter {
 
   renderWaypont(place) {
     render(this.#waypointComponent, place);
+  }
+
+  resetView() {
+    if(this.#state !== MODE.closed) {
+      this.replaceEditToInfo();
+    }
   }
 }

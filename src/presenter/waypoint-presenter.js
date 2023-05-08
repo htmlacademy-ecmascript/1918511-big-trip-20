@@ -25,10 +25,14 @@ export default class WaypointPresenter{
     }
     render(this.#eventComponent, this.#waypointContainer);
     for (let i = 0; i < this.#waypoints.length; i++) {
-      const singleWaypointPresenter = new SingleWaypointPresenter(this.#waypoints[i], this.changeFav);
-      this.#waypointsInst.push(singleWaypointPresenter);
-      singleWaypointPresenter.renderWaypont(this.#eventComponent.element);
+      this.#renderWaypont(this.#waypoints[i], this.#eventComponent.element);
     }
+  }
+
+  #renderWaypont(waypoint, placeToRender) {
+    const singleWaypointPresenter = new SingleWaypointPresenter(waypoint, this.changeFav, this.resetToClosed);
+    this.#waypointsInst.push(singleWaypointPresenter);
+    singleWaypointPresenter.renderWaypont(placeToRender);
   }
 
   changeFav = (id) => {
@@ -43,6 +47,12 @@ export default class WaypointPresenter{
       elem.destroy();
     });
     this.init();
+  };
+
+  resetToClosed = () => {
+    this.#waypointsInst.forEach((elem) => {
+      elem.resetView();
+    });
   };
 }
 
