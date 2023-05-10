@@ -26,7 +26,22 @@ export const FILTERS_OPTIONS = [
   'Past'
 ];
 
-export const MODE = {
-  opened: 'opened',
-  closed: 'closed',
+export const Mode = {
+  OPENED: 'opened',
+  CLOSED: 'closed',
+};
+
+export const FiltersType = {
+  EVERYTHING: 'default',
+  FUTURE: 'date-future',
+  PRESENT: 'date-present',
+  PAST: 'date-past',
+};
+
+export const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
 };
