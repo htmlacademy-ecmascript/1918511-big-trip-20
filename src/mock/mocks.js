@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import { WAYPOINT_OPTIONS, TRAVEL_WAYPOINTS } from '../const.js';
 import { getRandomElem } from '../utils.js';
 
@@ -41,9 +41,9 @@ export const getRandomData = () => {
     'id': nanoid(),
     'basePrice': Math.floor(Math.random() * 1000),
     // 'dateFrom': '2019-07-10T22:55:56.845Z',
-    'dateFrom': dayjs(new Date(2021, getRandomArbitrary(10, 11) , getRandomArbitrary(20, 26) , getRandomArbitrary(0, 24) ,getRandomArbitrary(0, 60))),
+    'dateFrom': new Date(2021, getRandomArbitrary(10, 11) , getRandomArbitrary(20, 26) , getRandomArbitrary(0, 24) ,getRandomArbitrary(0, 60)),
     // 'dateTo': '2019-07-11T11:22:13.375Z',
-    'dateTo': dayjs(new Date(2021, getRandomArbitrary(10, 11) , getRandomArbitrary(26, 27) , getRandomArbitrary(0, 24) ,getRandomArbitrary(0, 60))),
+    'dateTo': new Date(2021, getRandomArbitrary(10, 11) , getRandomArbitrary(26, 27) , getRandomArbitrary(0, 24) ,getRandomArbitrary(0, 60)),
     'destination': mapWaypoints.get(getRandomElem(TRAVEL_WAYPOINTS)),
     'isFavourite': [true,false][Math.floor(Math.random() * 2)],
     'offers': mapOptions.get(type),
@@ -56,4 +56,4 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-
+export {mapWaypoints};

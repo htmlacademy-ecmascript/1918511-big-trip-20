@@ -41,7 +41,7 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
-    const waypointPresenter = new WaypointPresenter({waypointContainer: this.#tripEventsSection});
+    const waypointPresenter = new WaypointPresenter({waypointContainer: this.#tripEventsSection, newSourcedWaypoints: this.updateSourcedWaypoints});
     this.#waypointsInst = waypointPresenter;
     waypointPresenter.init(this.#waypoints);
   }
@@ -80,6 +80,10 @@ export default class MainPresenter {
     this.#sortOptions(sortType);
     this.#deleteWaypoints();
     this.#renderWaypoints();
+  };
+
+  updateSourcedWaypoints = (newData) => {
+    this.#sourcedWaypoints = [...newData];
   };
 
 }
