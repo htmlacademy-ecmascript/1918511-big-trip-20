@@ -1,7 +1,4 @@
-
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-
-// import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, countDates } from '../utils.js';
 
 const HOURS_MINS = 'HH:mm';
@@ -51,14 +48,12 @@ function createWaypointElement(data) {
 }
 
 export default class WaypointView extends AbstractStatefulView {
-  // #waypoint = null;
   #onEditClick = null;
   #handleFavourite = null;
 
   constructor ({waypoint, onEditClick, handleFavourite}) {
     super();
     this._setState(waypoint);
-    // this.#waypoint = waypoint;
     this.#onEditClick = onEditClick;
     this.#handleFavourite = handleFavourite;
 
