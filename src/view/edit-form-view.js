@@ -123,6 +123,10 @@ export default class EditFormView extends AbstractView {
       .addEventListener('click', this.#formCancelHandler);
   }
 
+  get template () {
+    return createEditForm(this.#waypoint);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleSubmit();
@@ -134,8 +138,4 @@ export default class EditFormView extends AbstractView {
 
   };
 
-
-  get template () {
-    return createEditForm(this.#waypoint);
-  }
 }

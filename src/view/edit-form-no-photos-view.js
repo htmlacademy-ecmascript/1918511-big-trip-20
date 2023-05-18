@@ -110,6 +110,10 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template () {
+    return createEditNoPhotoForm(this._state);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
@@ -140,14 +144,6 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
     }
   };
 
-  static parseWaypointToState(waypoint) {
-    return {...waypoint};
-  }
-
-  get template () {
-    return createEditNoPhotoForm(this._state);
-  }
-
   _restoreHandlers() {
     this.element
       .querySelector('.event__save-btn')
@@ -170,6 +166,10 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
     this.updateElement(
       EditFormNoPhotosView.parseWaypointToState(waypoint)
     );
+  }
+
+  static parseWaypointToState(waypoint) {
+    return {...waypoint};
   }
 
 }
