@@ -1,0 +1,126 @@
+import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
+import WaypointView from '../view/waypoint-view.js';
+import { render, remove, replace } from '../framework/render.js';
+import { Mode , UserAction , UpdateType } from '../const.js';
+
+export default class SingleWaypointPresenter {
+  #waypointComponent = null;
+  #waypointEditComponent = null;
+  #elem = null;
+  #state = Mode.CLOSED;
+
+  #pointsContainer = null;
+  #handleDataChange = null;
+  #handleModeChange = null;
+
+  constructor(pointsContainer , onDataChange, onModeChange) {
+
+    this.#pointsContainer = pointsContainer;
+    this.#handleModeChange = onModeChange;
+    this.#handleDataChange = onDataChange;
+
+  }
+
+  init(elem) {
+    this.#elem = elem;
+
+    const prevPointComponent = this.#waypointComponent;
+    const prevEditComponent = this.#waypointEditComponent;
+
+    this.#waypointComponent = new WaypointView({
+      waypoint: this.#elem,
+      onEditClick: this.#handleEditClick,
+      handleFavourite: this.#handleFavClick,
+    });
+
+    this.#waypointEditComponent = new EditFormNoPhotosView({
+      waypoint: this.#elem,
+      onFormSubmit: this.#formSubHandler,
+      onFormCancel: this.#formCancelHandler,
+    });
+
+    console.log(this.#waypointComponent.element);
+
+    if (prevPointComponent === null || prevEditComponent === null) {
+      render(this.#waypointComponent, this.#pointsContainer);
+      return;
+    }
+
+    if (this.#state === Mode.OPENED) {
+      replace(this.#waypointComponent, prevPointComponent);
+    }
+
+    if (this.#state === Mode.CLOSED) {
+      replace(this.#waypointEditComponent, prevEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevEditComponent);
+  }
+
+
+  //HANDLERS____
+
+  #handleFavClick = () => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#elem, isFavorite: !this.#elem.isFavorite},
+    );
+  };
+
+  #handleEditClick = () => {
+    this.replaceInfoToEdit();
+  };
+
+  #formSubHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      point,
+    );
+    this.replaceEditToInfo();
+
+  };
+
+  #formCancelHandler = () => {
+    this.resetView();
+  };
+
+  #escDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#waypointEditComponent.reset(this.#elem);
+      this.replaceEditToInfo();
+      document.removeEventListener('keydown', this.#escDownHandler);
+    }
+  };
+
+  replaceEditToInfo() {
+    replace(this.#waypointComponent, this.#waypointEditComponent);
+    document.addEventListener('keydown', this.#escDownHandler);
+    this.#state = Mode.CLOSED;
+  }
+
+  replaceInfoToEdit() {
+    replace(this.#waypointEditComponent, this.#waypointComponent);
+    document.removeEventListener('keydown', this.#escDownHandler);
+    this.#handleModeChange();
+    this.#state = Mode.OPENED;
+  }
+
+  destroy() {
+    remove(this.#waypointComponent);
+    remove(this.#waypointEditComponent);
+  }
+
+  // renderWaypont(place) {
+  //   render(this.#waypointComponent, place);
+  // }
+
+  resetView() {
+    if(this.#state !== Mode.CLOSED) {
+      this.replaceEditToInfo();
+    }
+  }
+}

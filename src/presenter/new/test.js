@@ -24,8 +24,6 @@ export default class MainPresenter {
   #waypoints = [];
   #waypointModel = null;
 
-  pointPresenters = new Map();
-
   constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel}) {
     this.#tripMain = tripMain;
     this.#tripControlsFilters = tripControlsFiltres;
@@ -37,7 +35,8 @@ export default class MainPresenter {
   }
 
   init() {
-    // this.#sourcedWaypoints = this.points;
+    this.#sourcedWaypoints = this.points;
+
     this.#renderFilters();
     this.#renderWaypoints(this.points);
   }
@@ -54,6 +53,11 @@ export default class MainPresenter {
     return this.#waypointModel.points;
   }
 
+  #renderWaypoint(waypoint, placeToRender) {
+    const singleWaypointPresenter = new SingleWaypointPresenter(waypoint, this.changeFav, this.resetToClosed, this.updateWaypoint, this.#handleViewAction);
+    this.#waypointsInst.push(singleWaypointPresenter);
+    singleWaypointPresenter.renderWaypont(placeToRender);
+  }
 
   #renderFilters() {
     render(new TripFiltersView(this.points), this.#tripControlsFilters, RenderPosition.AFTERBEGIN);
@@ -62,51 +66,6 @@ export default class MainPresenter {
       this.#renderSortOptions();
     }
   }
-
-  #handleModeChange() {
-    this.pointPresenters.forEach((presenter) => presenter.resetView());
-  }
-
-  #handleSortTypeChange = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-    this.#currentSortType = sortType;
-    this.#clearPoints();
-    this.#renderWaypoints(this.points);
-  };
-
-  #renderSortOptions() {
-    this.#sortComponent = new TripSortView({onSortTypeChange: this.#handleSortTypeChange});
-    render(this.#sortComponent, this.#tripEventsSection);
-  }
-
-  #renderWaypoint(waypoint) {
-    const singleWaypointPresenter = new SingleWaypointPresenter({
-      pointsContainer: this.#eventComponent.element,
-      onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange,
-    });
-    // this.#waypointsInst.push(singleWaypointPresenter);
-    // singleWaypointPresenter.renderWaypont(placeToRender);
-    singleWaypointPresenter.init(waypoint);
-    this.pointPresenters.set(waypoint.id, singleWaypointPresenter);
-  }
-
-  #renderWaypoints(waypoints) {
-    render(this.#eventComponent, this.#tripEventsSection);
-    waypoints.forEach((point) => this.#renderWaypoint(point));
-  }
-
-  #renderNoPoints() {
-    render(this.#notiComponent, this.#tripEventsSection);
-  }
-
-  #clearPoints () {
-    this.pointPresenters.forEach((presenter) => presenter.destroy());
-    this.pointPresenters.clear();
-  }
-
 
   #handleViewAction = (actionType, updateType, update) => {
     console.log(actionType, updateType, update);
@@ -124,15 +83,68 @@ export default class MainPresenter {
     // - обновить всю доску (например, при переключении фильтра)
   };
 
-  // updateSourcedWaypoints = (newData) => {
-  //   this.#sourcedWaypoints = [...newData];
-  // };
+  #renderWaypoints(waypoints) {
+    if (waypoints.length === 0) {
+      render(this.#notiComponent, this.#tripEventsSection);
+    }
+    render(this.#eventComponent, this.#tripEventsSection);
+    for (let i = 0; i < waypoints.length; i++) {
+      this.#renderWaypoint(waypoints[i], this.#eventComponent.element);
+    }
+  }
 
+  #renderSortOptions() {
+    this.#sortComponent = new TripSortView({onSortTypeChange: this.#handleSortTypeChange});
+    render(this.#sortComponent, this.#tripEventsSection);
+  }
 
-  // resetToClosed = () => {
-  //   this.#waypointsInst.forEach((elem) => {
-  //     elem.resetView();
-  //   });
-  // };
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#currentSortType = sortType;
+    this.clearList();
+    this.#renderWaypoints(this.points);
+  };
 
+  updateSourcedWaypoints = (newData) => {
+    this.#sourcedWaypoints = [...newData];
+  };
+
+  clearList = () => {
+    this.#waypointsInst.forEach((elem) => {
+      elem.destroy();
+    });
+  };
+
+  changeFav = (id) => {
+    this.#waypoints = this.#sourcedWaypoints.map((elem) => {
+      if (elem.id === id) {
+        elem.isFavourite = !elem.isFavourite;
+        return elem;
+      }
+      return elem;
+    });
+    this.clearList();
+    this.updateSourcedWaypoints(this.#waypoints);
+    this.#renderWaypoints(this.#sourcedWaypoints);
+  };
+
+  resetToClosed = () => {
+    this.#waypointsInst.forEach((elem) => {
+      elem.resetView();
+    });
+  };
+
+  updateWaypoint = (updatedWaypoint) => {
+    this.#waypoints = this.#sourcedWaypoints.map((elem) => {
+      if (elem.id === updatedWaypoint.id) {
+        return updatedWaypoint;
+      }
+      return elem;
+    });
+    this.clearList();
+    this.updateSourcedWaypoints(this.#waypoints);
+    this.#renderWaypoints(this.#sourcedWaypoints);
+  };
 }
