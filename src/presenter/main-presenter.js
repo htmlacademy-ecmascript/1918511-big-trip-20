@@ -40,6 +40,10 @@ export default class MainPresenter {
 
   }
 
+  get points() {
+    return this.#waypointModel.points;
+  }
+
   #renderWaypoints() {
     const waypointPresenter = new WaypointPresenter({waypointContainer: this.#tripEventsSection, newSourcedWaypoints: this.updateSourcedWaypoints});
     this.#waypointsInst = waypointPresenter;
