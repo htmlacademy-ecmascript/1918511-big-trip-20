@@ -1,4 +1,4 @@
-import MainPresenter from './presenter/main-presenter.js';
+import MainPresenter from './presenter/test.js';
 // import WaypointPresenter from './presenter/waypoint-presenter.js';
 import WaypointModel from './model/waypoint-model.js';
 
