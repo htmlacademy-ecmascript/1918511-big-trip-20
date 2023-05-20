@@ -1,7 +1,4 @@
 import { render } from '../framework/render.js';
-// import EditFormView from '../view/edit-form-view.js';
-// import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
-// import WaypointView from '../view/waypoint-view.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
 import SingleWaypointPresenter from './single-waypoint-presenter.js';
@@ -11,11 +8,14 @@ export default class WaypointPresenter{
   #waypoints = [];
   #waypointsInst = [];
   #waypointContainer = null;
-  // #waypointModel = null;
+  #waypointModel = null;
 
-  constructor({waypointContainer, newSourcedWaypoints}) {
+  constructor({waypointContainer, newSourcedWaypoints, waypointModel}) {
     this.#waypointContainer = waypointContainer;
     this.newSourcedWaypoints = newSourcedWaypoints;
+    this.#waypointModel = waypointModel;
+
+    this.#waypointModel.addObserver();
   }
 
   init(waypointsArray) {

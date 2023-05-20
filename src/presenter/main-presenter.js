@@ -16,7 +16,7 @@ export default class MainPresenter {
 
   #waypointModel = '';
   // #waypoints = [];
-  // #sourcedWaypoints = [];
+  #sourcedWaypoints = [];
   #waypointsInst = null;
 
   constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel}) {
@@ -25,11 +25,13 @@ export default class MainPresenter {
     this.#tripEventsSection = tripEventsSection;
     // this.#waypoints = waypoints;
     this.#waypointModel = waypointModel;
+
+    this.#waypointModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
     // this.#waypoints = [...this.#waypointModel.points];
-    // this.#sourcedWaypoints = [...this.#waypointModel.points];
+    this.#sourcedWaypoints = [...this.#waypointModel.points];
 
     this.#renderFilters();
     this.#renderWaypoints();
@@ -57,7 +59,11 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
-    const waypointPresenter = new WaypointPresenter({waypointContainer: this.#tripEventsSection, newSourcedWaypoints: this.updateSourcedWaypoints});
+    const waypointPresenter = new WaypointPresenter({
+      waypointContainer: this.#tripEventsSection,
+      newSourcedWaypoints: this.updateSourcedWaypoints,
+      waypointModel: this.#waypointModel,
+    });
     this.#waypointsInst = waypointPresenter;
     waypointPresenter.init(this.points);
   }
@@ -89,6 +95,22 @@ export default class MainPresenter {
   //   this.#currentSortType = sortType;
   // }
 
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
+  };
+
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
@@ -100,7 +122,7 @@ export default class MainPresenter {
   };
 
   updateSourcedWaypoints = (newData) => {
-    this.points = [...newData];
+    this.#sourcedWaypoints = [...newData];
   };
 
 }
