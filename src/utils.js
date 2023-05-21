@@ -59,4 +59,5 @@ function sortWaypointsByPrice(waypA, waypB) {
 
 }
 
+
 export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice};

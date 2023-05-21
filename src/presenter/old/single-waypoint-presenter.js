@@ -1,7 +1,7 @@
 import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
 import WaypointView from '../view/waypoint-view.js';
 import { render, remove, replace } from '../framework/render.js';
-import { Mode , UserAction , UpdateType } from '../const.js';
+import { Mode } from '../const.js';
 
 export default class SingleWaypointPresenter {
   #waypointComponent = null;
@@ -15,12 +15,21 @@ export default class SingleWaypointPresenter {
     this.resetToClosed = resetToClosed;
     this.updateWaypointInfo = updateWaypointInfo;
 
+    const ecsKeydownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        this.#waypointEditComponent.reset(this.#elem);
+        this.replaceEditToInfo();
+        document.removeEventListener('keydown', ecsKeydownHandler);
+      }
+    };
+
     this.#waypointComponent = new WaypointView ({
       waypoint: this.#elem,
       onEditClick: () => {
         this.resetToClosed(this.#elem.id);
         this.replaceInfoToEdit();
-        document.addEventListener('keydown', this.#escDownHandler);
+        document.addEventListener('keydown', ecsKeydownHandler);
       },
       handleFavourite: () => {
         this.changeFav(this.#elem.id);
@@ -33,24 +42,16 @@ export default class SingleWaypointPresenter {
         this.#elem = {...updatedElement};
         this.updateWaypointInfo(this.#elem);
         this.replaceEditToInfo();
-        document.removeEventListener('keydown', this.#escDownHandler);
+        document.removeEventListener('keydown', ecsKeydownHandler);
       },
       onFormCancel: () => {
         this.#waypointEditComponent.reset(this.#elem);
         this.replaceEditToInfo();
-        document.removeEventListener('keydown', this.#escDownHandler);
+        document.removeEventListener('keydown', ecsKeydownHandler);
       }
     });
   }
 
-  #escDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#waypointEditComponent.reset(this.#elem);
-      this.replaceEditToInfo();
-      document.removeEventListener('keydown', this.#escDownHandler);
-    }
-  };
 
   replaceEditToInfo() {
     replace(this.#waypointComponent, this.#waypointEditComponent);

@@ -3,11 +3,11 @@ import TripInfoView from '../view/trip-info-view.js';
 import TripFiltersView from '../view/filters-view.js';
 import TripSortView from '../view/sorting-view.js';
 // import WaypointPresenter from './waypoint-presenter.js';
-import { SortType } from '../const.js';
+import { SortType , UpdateType, UserAction } from '../const.js';
 import { sortWaypointsByTime , sortWaypointsByPrice} from '../utils.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
-import SingleWaypointPresenter from './test2.js';
+import SingleWaypointPresenter from './single-waypoint-presenter.js';
 
 
 export default class MainPresenter {
@@ -24,7 +24,7 @@ export default class MainPresenter {
   #waypoints = [];
   #waypointModel = null;
 
-  pointPresenters = new Map();
+  #pointPresenters = new Map();
 
   constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel}) {
     this.#tripMain = tripMain;
@@ -37,9 +37,7 @@ export default class MainPresenter {
   }
 
   init() {
-    // this.#sourcedWaypoints = this.points;
-    this.#renderFilters();
-    this.#renderWaypoints(this.points);
+    this.#renderTripInfo();
   }
 
   get points() {
@@ -63,9 +61,9 @@ export default class MainPresenter {
     }
   }
 
-  #handleModeChange() {
-    this.pointPresenters.forEach((presenter) => presenter.resetView());
-  }
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
 
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
@@ -76,8 +74,15 @@ export default class MainPresenter {
     this.#renderWaypoints(this.points);
   };
 
+  #handlePointChange = (updatedWaypoint) => {
+    this.#pointPresenters.get(updatedWaypoint.id).init(updatedWaypoint);
+  };
+
   #renderSortOptions() {
-    this.#sortComponent = new TripSortView({onSortTypeChange: this.#handleSortTypeChange});
+    this.#sortComponent = new TripSortView({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange,
+    });
     render(this.#sortComponent, this.#tripEventsSection);
   }
 
@@ -87,15 +92,17 @@ export default class MainPresenter {
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
-    // this.#waypointsInst.push(singleWaypointPresenter);
-    // singleWaypointPresenter.renderWaypont(placeToRender);
     singleWaypointPresenter.init(waypoint);
-    this.pointPresenters.set(waypoint.id, singleWaypointPresenter);
+    this.#pointPresenters.set(waypoint.id, singleWaypointPresenter);
   }
 
-  #renderWaypoints(waypoints) {
+  // РАЗОБРАТЬСЯ ТУТ
+  #renderWaypoints() {
     render(this.#eventComponent, this.#tripEventsSection);
-    waypoints.forEach((point) => this.#renderWaypoint(point));
+    if (this.points.length === 0) {
+      this.#renderNoPoints();
+    }
+    this.points.forEach((point) => this.#renderWaypoint(point));
   }
 
   #renderNoPoints() {
@@ -103,10 +110,18 @@ export default class MainPresenter {
   }
 
   #clearPoints () {
-    this.pointPresenters.forEach((presenter) => presenter.destroy());
-    this.pointPresenters.clear();
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+
+    // if (resetSortType) {
+    //   this.#currentSortType = SortType.DAY;
+    // }
   }
 
+  #renderTripInfo() {
+    this.#renderFilters();
+    this.#renderWaypoints();
+  }
 
   #handleViewAction = (actionType, updateType, update) => {
     console.log(actionType, updateType, update);
@@ -114,6 +129,14 @@ export default class MainPresenter {
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
+    switch (actionType) {
+      case UserAction.ADD_POINT:
+        this.#waypointModel.addWaypoint(updateType, update);
+        break;
+      case UserAction.UPDATE_POINT:
+        this.#waypointModel.updateWaypoint(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -122,17 +145,20 @@ export default class MainPresenter {
     // - обновить часть списка (например, когда поменялось описание)
     // - обновить список (например, когда задача ушла в архив)
     // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearPoints();
+        this.#renderWaypoints();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearPoints({resetSortType: true});
+        this.#renderWaypoints();
+        break;
+    }
   };
 
-  // updateSourcedWaypoints = (newData) => {
-  //   this.#sourcedWaypoints = [...newData];
-  // };
-
-
-  // resetToClosed = () => {
-  //   this.#waypointsInst.forEach((elem) => {
-  //     elem.resetView();
-  //   });
-  // };
 
 }
