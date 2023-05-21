@@ -1,14 +1,14 @@
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 import TripInfoView from '../view/trip-info-view.js';
-import TripFiltersView from '../view/filters-view.js';
+// import TripFiltersView from '../view/filters-view.js';
 import TripSortView from '../view/sorting-view.js';
 // import WaypointPresenter from './waypoint-presenter.js';
-import { SortType , UpdateType, UserAction } from '../const.js';
-import { sortWaypointsByTime , sortWaypointsByPrice} from '../utils.js';
+import { SortType , UpdateType, UserAction, FiltersType } from '../const.js';
+import { sortWaypointsByTime , sortWaypointsByPrice, filter} from '../utils.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
 import SingleWaypointPresenter from './single-waypoint-presenter.js';
-
+import FilterPresenter from './filter-presenter.js';
 
 export default class MainPresenter {
   #tripMain = null;
@@ -18,18 +18,23 @@ export default class MainPresenter {
   #currentSortType = SortType.DATE;
 
   #eventComponent = new EventsListView();
-  #notiComponent = new NotificationNewEventView();
+  #notiComponent = null;
+  #infoViewComponent = new TripInfoView();
   #waypointModel = null;
+  #filterModel = null;
+  #filterType = FiltersType.EVERYTHING;
 
   #pointPresenters = new Map();
 
-  constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel}) {
+  constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel, filterModel}) {
     this.#tripMain = tripMain;
     this.#tripControlsFilters = tripControlsFiltres;
     this.#tripEventsSection = tripEventsSection;
 
     this.#waypointModel = waypointModel;
     this.#waypointModel.addObserver(this.#handleModelEvent);
+    this.#filterModel = filterModel;
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
   }
 
@@ -38,24 +43,28 @@ export default class MainPresenter {
   }
 
   get points() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#waypointModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
     switch (this.#currentSortType){
       case SortType.DAY:
-        return [...this.#waypointModel.points];
+        return filteredPoints;
       case SortType.TIME:
-        return [...this.#waypointModel.points].sort(sortWaypointsByTime);
+        return filteredPoints.sort(sortWaypointsByTime);
       case SortType.PRICE:
-        return [...this.#waypointModel.points].sort(sortWaypointsByPrice);
+        return filteredPoints.sort(sortWaypointsByPrice);
     }
-    return this.#waypointModel.points;
+    return filteredPoints;
   }
 
-
   #renderFilters() {
-    render(new TripFiltersView(this.points), this.#tripControlsFilters, RenderPosition.AFTERBEGIN);
-    if (this.points.length !== 0) {
-      render(new TripInfoView(), this.#tripMain, RenderPosition.AFTERBEGIN);
-      this.#renderSortOptions();
-    }
+    const filtersPresenter = new FilterPresenter({
+      filterContainer: this.#tripControlsFilters,
+      filterModel: this.#filterModel,
+      waypointsModel: this.#waypointModel,
+    });
+    filtersPresenter.init();
   }
 
   #handleModeChange = () => {
@@ -90,21 +99,29 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
-    render(this.#eventComponent, this.#tripEventsSection);
     if (this.points.length === 0) {
       this.#renderNoPoints();
     }
+    if (this.points.length) {
+      render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
+      this.#renderSortOptions();
+    }
+    render(this.#eventComponent, this.#tripEventsSection);
     this.points.forEach((point) => this.#renderWaypoint(point));
   }
 
   #renderNoPoints() {
-    render(this.#notiComponent, this.#tripEventsSection);
+    this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType});
+    render(this.#notiComponent, this.#eventComponent.element);
   }
 
   #clearPoints () {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
+    remove(this.#notiComponent);
+    remove(this.#infoViewComponent);
+    remove(this.#sortComponent);
   }
 
   #renderTripInfo() {

@@ -32,10 +32,10 @@ export const Mode = {
 };
 
 export const FiltersType = {
-  EVERYTHING: 'default',
-  FUTURE: 'date-future',
-  PRESENT: 'date-present',
-  PAST: 'date-past',
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past',
 };
 
 export const SortType = {
