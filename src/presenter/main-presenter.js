@@ -26,8 +26,6 @@ export default class MainPresenter {
   #newPointPresenter = null;
   #pointPresenters = new Map();
 
-  #zxc;
-
   constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel, filterModel, onPointDestroy}) {
     this.#tripMain = tripMain;
     this.#tripControlsFilters = tripControlsFiltres;
@@ -52,7 +50,7 @@ export default class MainPresenter {
 
   get points() {
     this.#filterType = this.#filterModel.filter;
-    const points = this.#waypointModel.points;
+    const points = [...this.#waypointModel.points];
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType){

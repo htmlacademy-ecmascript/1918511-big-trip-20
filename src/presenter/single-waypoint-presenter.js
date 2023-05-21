@@ -57,8 +57,6 @@ export default class SingleWaypointPresenter {
     remove(prevEditComponent);
   }
 
-  //HANDLERS____
-
   #handleFavClick = () => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,

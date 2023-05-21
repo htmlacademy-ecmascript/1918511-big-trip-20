@@ -1,8 +1,6 @@
 import { nanoid } from 'nanoid';
-// import dayjs from 'dayjs';
 import { WAYPOINT_OPTIONS, TRAVEL_WAYPOINTS } from '../const.js';
 import { getRandomElem } from '../utils.js';
-
 
 const mapWaypoints = new Map();
 const mapOptions = new Map();

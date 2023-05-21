@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { FiltersType } from './const';
 
+const ZERO = 0;
 
 const humanizeDate = (anyDate, dateFormat) => anyDate ? dayjs(anyDate).format(dateFormat) : '';
 
@@ -63,9 +64,9 @@ function isDatesEqual(dateA, dateB) {
 
 const filter = {
   [FiltersType.EVERYTHING]: (events) => events,
-  [FiltersType.FUTURE]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) > 0),
-  [FiltersType.PRESENT]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) <= 0 && dayjs(oneEvent.dateTo).diff(new Date()) >= 0),
-  [FiltersType.PAST]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) < 0),
+  [FiltersType.FUTURE]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) > ZERO),
+  [FiltersType.PRESENT]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) <= ZERO && dayjs(oneEvent.dateTo).diff(new Date()) >= ZERO),
+  [FiltersType.PAST]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) < ZERO),
 };
 
 export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual, filter};
