@@ -1,4 +1,4 @@
-import EditFormNoPhotosView from '../view/edit-form-no-photos-view.js';
+import EditFormView from '../view/edit-form-view.js';
 import WaypointView from '../view/waypoint-view.js';
 import { render, remove, replace } from '../framework/render.js';
 import { Mode , UserAction , UpdateType } from '../const.js';
@@ -33,7 +33,7 @@ export default class SingleWaypointPresenter {
       handleFavourite: this.#handleFavClick,
     });
 
-    this.#waypointEditComponent = new EditFormNoPhotosView({
+    this.#waypointEditComponent = new EditFormView({
       waypoint: this.#elem,
       onFormSubmit: this.#formSubHandler,
       onFormCancel: this.#formCancelHandler,
@@ -103,13 +103,13 @@ export default class SingleWaypointPresenter {
 
   replaceEditToInfo() {
     replace(this.#waypointComponent, this.#waypointEditComponent);
-    document.addEventListener('keydown', this.#escDownHandler);
+    document.removeEventListener('keydown', this.#escDownHandler);
     this.#state = Mode.CLOSED;
   }
 
   replaceInfoToEdit() {
     replace(this.#waypointEditComponent, this.#waypointComponent);
-    document.removeEventListener('keydown', this.#escDownHandler);
+    document.addEventListener('keydown', this.#escDownHandler);
     this.#handleModeChange();
     this.#state = Mode.OPENED;
   }

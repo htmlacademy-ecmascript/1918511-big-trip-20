@@ -56,4 +56,4 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-export {mapWaypoints};
+export {mapWaypoints, mapOptions};

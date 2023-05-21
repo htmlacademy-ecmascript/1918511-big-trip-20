@@ -1,14 +1,13 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import TripInfoView from '../view/trip-info-view.js';
-// import TripFiltersView from '../view/filters-view.js';
 import TripSortView from '../view/sorting-view.js';
-// import WaypointPresenter from './waypoint-presenter.js';
 import { SortType , UpdateType, UserAction, FiltersType } from '../const.js';
 import { sortWaypointsByTime , sortWaypointsByPrice, filter} from '../utils.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
 import SingleWaypointPresenter from './single-waypoint-presenter.js';
 import FilterPresenter from './filter-presenter.js';
+import NewPointPresenter from './new-waypoint-presenter.js';
 
 export default class MainPresenter {
   #tripMain = null;
@@ -24,9 +23,12 @@ export default class MainPresenter {
   #filterModel = null;
   #filterType = FiltersType.EVERYTHING;
 
+  #newPointPresenter = null;
   #pointPresenters = new Map();
 
-  constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel, filterModel}) {
+  #zxc;
+
+  constructor({tripMain, tripControlsFiltres, tripEventsSection, waypointModel, filterModel, onPointDestroy}) {
     this.#tripMain = tripMain;
     this.#tripControlsFilters = tripControlsFiltres;
     this.#tripEventsSection = tripEventsSection;
@@ -35,6 +37,12 @@ export default class MainPresenter {
     this.#waypointModel.addObserver(this.#handleModelEvent);
     this.#filterModel = filterModel;
     this.#filterModel.addObserver(this.#handleModelEvent);
+
+    this.#newPointPresenter = new NewPointPresenter({
+      waypointListContainer: this.#eventComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onPointDestroy,
+    });
 
   }
 
@@ -68,6 +76,7 @@ export default class MainPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -116,6 +125,7 @@ export default class MainPresenter {
   }
 
   #clearPoints () {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
@@ -158,4 +168,10 @@ export default class MainPresenter {
         break;
     }
   };
+
+  createWaypoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
+    this.#newPointPresenter.init();
+  }
 }
