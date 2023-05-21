@@ -37,6 +37,7 @@ export default class SingleWaypointPresenter {
       waypoint: this.#elem,
       onFormSubmit: this.#formSubHandler,
       onFormCancel: this.#formCancelHandler,
+      onFormDelete: this.#formDeleteHandler,
     });
 
     if (prevPointComponent === null || prevEditComponent === null) {
@@ -81,6 +82,14 @@ export default class SingleWaypointPresenter {
 
   #formCancelHandler = () => {
     this.resetView();
+  };
+
+  #formDeleteHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
   #escDownHandler = (evt) => {

@@ -53,11 +53,12 @@ function sortWaypointsByTime(waypA, waypB) {
 }
 
 function sortWaypointsByPrice(waypA, waypB) {
-  // const weight = getWeight(waypA.basePrice, waypB.basePrice);
-
   return waypB.basePrice - waypA.basePrice;
+}
 
+function isDatesEqual(dateA, dateB) {
+  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 }
 
 
-export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice};
+export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual};

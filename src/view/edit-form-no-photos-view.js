@@ -63,7 +63,7 @@ function createEditNoPhotoForm(data) {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Cancel</button>
+      <button class="event__reset-btn" type="reset">Delete</button>
 
       <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
@@ -104,12 +104,14 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
   #handleCancel = null;
   #datepickerTo = null;
   #datepickerFrom = null;
+  #handleDelete = null;
 
-  constructor ({waypoint, onFormSubmit, onFormCancel}) {
+  constructor ({waypoint, onFormSubmit, onFormCancel, onFormDelete}) {
     super();
     this._setState(EditFormNoPhotosView.parseWaypointToState(waypoint));
     this.#handleSubmit = onFormSubmit;
     this.#handleCancel = onFormCancel;
+    this.#handleDelete = onFormDelete;
 
     this._restoreHandlers();
   }
@@ -141,6 +143,11 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
   #formCancelHandler = (evt) => {
     evt.preventDefault();
     this.#handleCancel();
+  };
+
+  #formDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDelete(EditFormNoPhotosView.parseWaypointToState(this._state));
   };
 
   #formEventChangeHandler = (evt) => {
@@ -209,7 +216,7 @@ export default class EditFormNoPhotosView extends AbstractStatefulView {
       .addEventListener('click', this.#formSubmitHandler);
     this.element
       .querySelector('.event__reset-btn')
-      .addEventListener('click', this.#formCancelHandler);
+      .addEventListener('click', this.#formDeleteHandler);
     this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#formCancelHandler);

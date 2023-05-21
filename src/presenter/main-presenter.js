@@ -16,12 +16,9 @@ export default class MainPresenter {
   #tripEventsSection = null;
   #sortComponent = null;
   #currentSortType = SortType.DATE;
-  #sourcedWaypoints = [];
-  #waypointsInst = [];
 
   #eventComponent = new EventsListView();
   #notiComponent = new NotificationNewEventView();
-  #waypoints = [];
   #waypointModel = null;
 
   #pointPresenters = new Map();
@@ -74,10 +71,6 @@ export default class MainPresenter {
     this.#renderWaypoints(this.points);
   };
 
-  #handlePointChange = (updatedWaypoint) => {
-    this.#pointPresenters.get(updatedWaypoint.id).init(updatedWaypoint);
-  };
-
   #renderSortOptions() {
     this.#sortComponent = new TripSortView({
       currentSortType: this.#currentSortType,
@@ -96,7 +89,6 @@ export default class MainPresenter {
     this.#pointPresenters.set(waypoint.id, singleWaypointPresenter);
   }
 
-  // РАЗОБРАТЬСЯ ТУТ
   #renderWaypoints() {
     render(this.#eventComponent, this.#tripEventsSection);
     if (this.points.length === 0) {
@@ -113,9 +105,6 @@ export default class MainPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
-    // if (resetSortType) {
-    //   this.#currentSortType = SortType.DAY;
-    // }
   }
 
   #renderTripInfo() {
@@ -124,11 +113,6 @@ export default class MainPresenter {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
     switch (actionType) {
       case UserAction.ADD_POINT:
         this.#waypointModel.addWaypoint(updateType, update);
@@ -136,15 +120,13 @@ export default class MainPresenter {
       case UserAction.UPDATE_POINT:
         this.#waypointModel.updateWaypoint(updateType, update);
         break;
+      case UserAction.DELETE_POINT:
+        this.#waypointModel.deleteWaypoint(updateType, update);
+        break;
     }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
@@ -159,6 +141,4 @@ export default class MainPresenter {
         break;
     }
   };
-
-
 }
