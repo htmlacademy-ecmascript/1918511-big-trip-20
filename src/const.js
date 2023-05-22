@@ -32,10 +32,10 @@ export const Mode = {
 };
 
 export const FiltersType = {
-  EVERYTHING: 'default',
-  FUTURE: 'date-future',
-  PRESENT: 'date-present',
-  PAST: 'date-past',
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past',
 };
 
 export const SortType = {
@@ -44,4 +44,16 @@ export const SortType = {
   TIME: 'time',
   PRICE: 'price',
   OFFERS: 'offers',
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
