@@ -1,28 +1,31 @@
-import { render, RenderPosition, remove } from '../framework/render.js';
 import TripInfoView from '../view/trip-info-view.js';
 import TripSortView from '../view/sorting-view.js';
-import { SortType , UpdateType, UserAction, FiltersType } from '../const.js';
-import { sortWaypointsByTime , sortWaypointsByPrice, filter} from '../utils.js';
 import EventsListView from '../view/events-list-view.js';
 import NotificationNewEventView from '../view/notification-new-event-view.js';
 import SingleWaypointPresenter from './single-waypoint-presenter.js';
 import FilterPresenter from './filter-presenter.js';
 import NewPointPresenter from './new-waypoint-presenter.js';
+import LoadingView from '../view/loading-view.js';
+import { SortType , UpdateType, UserAction, FiltersType } from '../const.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
+import { sortWaypointsByTime , sortWaypointsByPrice, filter} from '../utils.js';
 
 export default class MainPresenter {
   #tripMain = null;
   #tripControlsFilters = null;
   #tripEventsSection = null;
   #sortComponent = null;
-  #currentSortType = SortType.DATE;
 
   #eventComponent = new EventsListView();
-  #notiComponent = null;
   #infoViewComponent = new TripInfoView();
+  #loadingComponent = new LoadingView();
+  #notiComponent = null;
   #waypointModel = null;
   #filterModel = null;
   #filterType = FiltersType.EVERYTHING;
 
+  #currentSortType = SortType.DATE;
+  #isLoading = true;
   #newPointPresenter = null;
   #pointPresenters = new Map();
 
@@ -113,13 +116,23 @@ export default class MainPresenter {
       render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
       this.#renderSortOptions();
     }
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     render(this.#eventComponent, this.#tripEventsSection);
     this.points.forEach((point) => this.#renderWaypoint(point));
+
   }
 
   #renderNoPoints() {
     this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType});
     render(this.#notiComponent, this.#eventComponent.element);
+    remove(this.#loadingComponent);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventComponent.element);
   }
 
   #clearPoints () {
@@ -162,6 +175,11 @@ export default class MainPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearPoints({resetSortType: true});
+        this.#renderWaypoints();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderWaypoints();
         break;
     }

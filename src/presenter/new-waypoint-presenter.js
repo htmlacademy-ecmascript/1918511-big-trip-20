@@ -1,7 +1,7 @@
-import {remove, render, RenderPosition} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
-import {nanoid} from 'nanoid';
-import {UserAction, UpdateType} from '../const.js';
+import { remove, render, RenderPosition } from '../framework/render.js';
+// import { nanoid } from 'nanoid';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class NewPointPresenter {
   #waypointListContainer = null;
@@ -49,7 +49,7 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
     this.destroy();
   };

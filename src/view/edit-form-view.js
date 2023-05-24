@@ -1,5 +1,5 @@
-import { WAYPOINT_OPTIONS , TRAVEL_WAYPOINTS } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { WAYPOINT_OPTIONS , TRAVEL_WAYPOINTS } from '../const.js';
 import { mapWaypoints , mapOptions } from '../mock/mocks.js';
 import { humanizeDate } from '../utils.js';
 import flatpickr from 'flatpickr';
@@ -17,8 +17,8 @@ const fillerData = {
 };
 
 function createEditForm(data, isNew) {
-
   const { destination, offers,type, dateFrom, dateTo} = data;
+  console.log(data);
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
   ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`)}
