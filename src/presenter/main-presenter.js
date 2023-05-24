@@ -109,6 +109,10 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
+    if (this.points.length) {
+      render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
+      this.#renderSortOptions();
+    }
     render(this.#eventComponent, this.#tripEventsSection);
     if (this.#isLoading) {
       this.#renderLoading();
@@ -116,10 +120,6 @@ export default class MainPresenter {
     }
     if (this.points.length === 0) {
       this.#renderNoPoints();
-    }
-    if (this.points.length) {
-      render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
-      this.#renderSortOptions();
     }
     this.points.forEach((point) => this.#renderWaypoint(point));
 
