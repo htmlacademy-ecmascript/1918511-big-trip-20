@@ -43,6 +43,7 @@ export default class MainPresenter {
       waypointListContainer: this.#eventComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onPointDestroy,
+      waypointModel: this.#waypointModel,
     });
 
   }
@@ -103,6 +104,7 @@ export default class MainPresenter {
       pointsContainer: this.#eventComponent.element,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
+      waypointModel: this.#waypointModel,
     });
     singleWaypointPresenter.init(waypoint);
     this.#pointPresenters.set(waypoint.id, singleWaypointPresenter);

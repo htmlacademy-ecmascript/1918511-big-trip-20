@@ -69,4 +69,12 @@ const filter = {
   [FiltersType.PAST]: (events) => events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) < ZERO),
 };
 
-export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual, filter};
+function ucFirst(str) {
+  if (!str) {
+    return str;
+  }
+
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual, filter, ucFirst};

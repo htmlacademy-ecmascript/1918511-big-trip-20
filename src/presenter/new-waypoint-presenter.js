@@ -7,13 +7,15 @@ export default class NewPointPresenter {
   #waypointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
+  #waypointModel = null;
 
   #waypointEditComponent = null;
 
-  constructor({waypointListContainer, onDataChange, onDestroy}) {
+  constructor({waypointListContainer, onDataChange, onDestroy, waypointModel}) {
     this.#waypointListContainer = waypointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#waypointModel = waypointModel;
   }
 
   init() {
@@ -24,6 +26,7 @@ export default class NewPointPresenter {
     this.#waypointEditComponent = new EditFormView({
       onFormSubmit: this.#handleFormSubmit,
       onFormCancel: this.#handleCancelClick,
+      waypointModel: this.#waypointModel,
       isNew: true,
     });
 

@@ -6,6 +6,7 @@ import { Mode , UserAction , UpdateType } from '../const.js';
 export default class SingleWaypointPresenter {
   #waypointComponent = null;
   #waypointEditComponent = null;
+  #waypointModel = null;
   #elem = null;
   #state = Mode.CLOSED;
 
@@ -13,11 +14,12 @@ export default class SingleWaypointPresenter {
   #handleDataChange = null;
   #handleModeChange = null;
 
-  constructor({pointsContainer , onDataChange, onModeChange}) {
+  constructor({pointsContainer , onDataChange, onModeChange, waypointModel}) {
 
     this.#pointsContainer = pointsContainer;
     this.#handleModeChange = onModeChange;
     this.#handleDataChange = onDataChange;
+    this.#waypointModel = waypointModel;
 
   }
 
@@ -38,6 +40,7 @@ export default class SingleWaypointPresenter {
       onFormSubmit: this.#formSubHandler,
       onFormCancel: this.#formCancelHandler,
       onFormDelete: this.#formDeleteHandler,
+      waypointModel: this.#waypointModel,
     });
 
     if (prevPointComponent === null || prevEditComponent === null) {
