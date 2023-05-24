@@ -44,7 +44,6 @@ export default class WaypointModel extends Observable {
         this.#offers,
       );
     } catch(err) {
-      console.log('error tut');
       this.#waypoints = [];
     }
     this._notify(UpdateType.INIT);

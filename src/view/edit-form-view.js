@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { WAYPOINT_OPTIONS , TRAVEL_WAYPOINTS } from '../const.js';
-import { mapWaypoints , mapOptions } from '../mock/mocks.js';
+import { mapWaypoints } from '../mock/mocks.js';
 import { humanizeDate } from '../utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
@@ -10,9 +10,25 @@ const fillerData = {
   basePrice: '0',
   dateFrom: new Date(),
   dateTo: new Date(),
-  destination: mapWaypoints.get('Tokyo'),
+  destination: {
+    'id': 'cfe416cq-10xa-ye10-8077-2fs9a01edcab',
+    'description': 'THERE SHOULD BE DESCTRIPTION OF Tokyo',
+    'name': 'Tokyo',
+    'pictures': Array.from({ length: Math.floor(Math.random() * 10) }, () => ({
+      src: `https://loremflickr.com/248/152?random=${Math.floor(
+        Math.random() * 100
+      )}`,
+      description: 'Tokyo parliament building',
+    })),
+  },
   isFavourite: false,
-  offers: mapOptions.get(WAYPOINT_OPTIONS[0]),
+  offers: [
+    {
+      'id': 'b4c3e4e6-9053-42ce-b747-e281314baa31',
+      'title': 'Just pay us ',
+      'price': Math.floor(Math.random() * 100)
+    }
+  ],
   type: WAYPOINT_OPTIONS[0],
 };
 
