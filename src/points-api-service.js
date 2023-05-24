@@ -32,9 +32,9 @@ export default class PointsApiService extends ApiService {
 
   async addPoint(point) {
     const response = await this._load({
-      url: `${Urls.EVENTS}`,
+      url: `${Urls.POINTS}`,
       method: Method.POST,
-      body: JSON.stringify(this.adaptToServer(point)),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({ 'Content-Type': 'application/json' }),
     });
 
@@ -43,9 +43,9 @@ export default class PointsApiService extends ApiService {
     return parsedResponse;
   }
 
-  async deleteEvent(point) {
+  async deletePoint(point) {
     const response = await this._load({
-      url: `${Urls.EVENTS}/${point.id}`,
+      url: `${Urls.POINTS}/${point.id}`,
       method: Method.DELETE,
     });
 
@@ -60,7 +60,8 @@ export default class PointsApiService extends ApiService {
       'is_favorite': point.isFavourite,
     };
 
-    // adaptedPoint.destination = this.#destinations;
+    adaptedPoint.destination = adaptedPoint.destination.id;
+
     if (adaptedPoint.offers.length) {
       adaptedPoint.offers = adaptedPoint.offers.map((elem) => elem.id);
     }

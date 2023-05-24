@@ -18,7 +18,6 @@ const fillerData = {
 
 function createEditForm(data, isNew) {
   const { destination, offers,type, dateFrom, dateTo} = data;
-  console.log(data);
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
   ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`)}

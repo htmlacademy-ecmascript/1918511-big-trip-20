@@ -73,5 +73,5 @@ export const Method = {
   POST: 'POST',
 };
 
-export const AUTHORIZATION = 'Basic hSrge4323sssc2j';
+export const AUTHORIZATION = 'Basic asbveerth324512saa';
 

@@ -109,16 +109,17 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
+    console.log(this.#isLoading);
+    if (!this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     if (this.points.length === 0) {
       this.#renderNoPoints();
     }
     if (this.points.length) {
       render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
       this.#renderSortOptions();
-    }
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
     }
     render(this.#eventComponent, this.#tripEventsSection);
     this.points.forEach((point) => this.#renderWaypoint(point));
