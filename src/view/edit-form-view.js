@@ -1,12 +1,11 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-// import { WAYPOINT_OPTIONS } from '../const.js';
 import { humanizeDate , ucFirst } from '../utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 function createEditForm(data, isNew, model) {
-  const { destination,type, dateFrom, dateTo} = data;
+  const { destination, type, dateFrom, dateTo} = data;
 
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
@@ -18,6 +17,7 @@ function createEditForm(data, isNew, model) {
 </button>`;
 
   const offersModelInfo = model.offers.find((tip) => tip.type === type);
+  const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
 
   const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
 <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
@@ -78,8 +78,10 @@ function createEditForm(data, isNew, model) {
         <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode('')}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${isNew ? 'Cancel' : 'Delete'}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit">${data.isSaving ? 'Saving...' : 'Save'}</button>
+      <button class="event__reset-btn" type="reset">
+      ${isNew ? 'Cancel' : deleteCase}
+      </button>
 
       ${isNew ? '' : rollupBtn}
     </header>
@@ -165,8 +167,10 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-
-    this.#handleSubmit(this._state);
+    // console.log(this._state);
+    // EditFormView.parseStateToWaypoint(this._state);
+    // console.log(this._state);
+    this.#handleSubmit(EditFormView.parseStateToWaypoint(this._state));
   };
 
   #formCancelHandler = (evt) => {
@@ -176,7 +180,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formDeleteHandler = (evt) => {
     evt.preventDefault();
-    this.#handleDelete(EditFormView.parseWaypointToState(this._state));
+    this.#handleDelete(EditFormView.parseStateToWaypoint(this._state));
   };
 
   #formEventChangeHandler = (evt) => {
@@ -272,8 +276,17 @@ export default class EditFormView extends AbstractStatefulView {
     );
   }
 
-  static parseWaypointToState(waypoint) {
-    return {...waypoint};
+  static parseStateToWaypoint(waypoint) {
+    const point = {...waypoint};
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
+  }
+
+  static parseWaypointToState(state) {
+    return { isDisabled: false, isSaving: false, isDeleting: false, ...state };
   }
 
 }
