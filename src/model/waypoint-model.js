@@ -6,7 +6,6 @@ import { UpdateType } from '../const.js';
 
 export default class WaypointModel extends Observable {
   #pointsApiService = null;
-  // #waypoints = Array.from({length: WAYPOINTS_COUNT}, getRandomData);
   #waypoints = [];
   #offers = [];
   #destinations = [];
@@ -14,11 +13,6 @@ export default class WaypointModel extends Observable {
   constructor ({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
-
-    // this.#pointsApiService.points.then((points) => {
-    //   console.log(points.map(this.#adaptToClient));
-
-    // });
   }
 
   get points() {
@@ -43,9 +37,10 @@ export default class WaypointModel extends Observable {
         this.#destinations,
         this.#offers,
       );
-      // console.log(this.#offers);
     } catch(err) {
       this.#waypoints = [];
+      this.#destinations = [];
+      this.#offers = [];
     }
     this._notify(UpdateType.INIT);
   }

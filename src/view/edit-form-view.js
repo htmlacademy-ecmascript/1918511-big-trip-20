@@ -1,19 +1,32 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-// import { WAYPOINT_OPTIONS } from '../const.js';
 import { humanizeDate , ucFirst } from '../utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 function createEditForm(data, isNew, model) {
-  const { destination,type, dateFrom, dateTo} = data;
+  const { destination, type, dateFrom, dateTo} = data;
+
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
   ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`).join('')}
   </div></div>` : '';
+
   const rollupBtn = `<button class="event__rollup-btn" type="button">
   <span class="visually-hidden">Open event</span>
 </button>`;
+
+  const offersModelInfo = model.offers.find((tip) => tip.type === type);
+  const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
+
+  const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+<label class="event__offer-label" for="event-offer-luggage-1">
+  <span class="event__offer-title">${elem.title}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${elem.price}</span>
+</label>
+</div>`).join('')}</div>` : '';
 
 
   return /*html*/`<li class="trip-events__item">
@@ -65,8 +78,10 @@ function createEditForm(data, isNew, model) {
         <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode('')}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${isNew ? 'Cancel' : 'Delete'}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit">${data.isSaving ? 'Saving...' : 'Save'}</button>
+      <button class="event__reset-btn" type="reset">
+      ${isNew ? 'Cancel' : deleteCase}
+      </button>
 
       ${isNew ? '' : rollupBtn}
     </header>
@@ -76,16 +91,9 @@ function createEditForm(data, isNew, model) {
     <section class="event__details">
       <section class="event__section  event__section--offers">
 
-      ${model.offers.length > 0 ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+      ${offersModelInfo.offers.length > 0 ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
 
-      ${model.offers && `<div class="event__available-offers">${model.offers.map((elem) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${elem.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${elem.price}</span>
-      </label>
-    </div>`).join('')}</div>`}
+      ${offersList}
 
       </section>
 
@@ -159,8 +167,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-
-    this.#handleSubmit(this._state);
+    this.#handleSubmit(EditFormView.parseStateToWaypoint(this._state));
   };
 
   #formCancelHandler = (evt) => {
@@ -170,7 +177,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formDeleteHandler = (evt) => {
     evt.preventDefault();
-    this.#handleDelete(EditFormView.parseWaypointToState(this._state));
+    this.#handleDelete(EditFormView.parseStateToWaypoint(this._state));
   };
 
   #formEventChangeHandler = (evt) => {
@@ -266,8 +273,17 @@ export default class EditFormView extends AbstractStatefulView {
     );
   }
 
-  static parseWaypointToState(waypoint) {
-    return {...waypoint};
+  static parseStateToWaypoint(waypoint) {
+    const point = {...waypoint};
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
+  }
+
+  static parseWaypointToState(state) {
+    return { isDisabled: false, isSaving: false, isDeleting: false, ...state };
   }
 
 }

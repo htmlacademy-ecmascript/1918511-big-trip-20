@@ -1,6 +1,5 @@
 import EditFormView from '../view/edit-form-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
-// import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const.js';
 
 export default class NewPointPresenter {
@@ -54,7 +53,6 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.destroy();
   };
 
   #handleCancelClick = () => {
@@ -67,4 +65,23 @@ export default class NewPointPresenter {
       this.destroy();
     }
   };
+
+  setSaving() {
+    this.#waypointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFromState = () => {
+      this.#waypointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#waypointEditComponent.shake(resetFromState);
+  }
 }
