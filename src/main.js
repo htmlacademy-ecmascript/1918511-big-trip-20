@@ -2,13 +2,17 @@ import MainPresenter from './presenter/main-presenter.js';
 import WaypointModel from './model/waypoint-model.js';
 import FilterModel from './model/filter-model.js';
 import NewEventButtonView from './view/new-event-button-view.js';
+import PointsApiService from './points-api-service.js';
 import { render } from './framework/render.js';
+import { Urls, AUTHORIZATION } from './const.js';
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsFiltersElement = document.querySelector('.trip-controls__filters');
 const tripEventsSection = document.querySelector('.trip-events');
 
-const waypointModel = new WaypointModel();
+const waypointModel = new WaypointModel({
+  pointsApiService: new PointsApiService(Urls.MAIN , AUTHORIZATION)
+});
 const filterModel = new FilterModel();
 const mainPresenter = new MainPresenter({tripMain: tripMainElement,
   tripControlsFiltres: tripControlsFiltersElement,
@@ -30,7 +34,9 @@ function handleNewTaskButtonClick() {
   mainPresenter.createWaypoint();
   newPointButtonComponent.element.disabled = true;
 }
-render(newPointButtonComponent, tripMainElement);
 
 mainPresenter.init();
+waypointModel.init().finally(() => {
+  render(newPointButtonComponent, tripMainElement);
+});
 

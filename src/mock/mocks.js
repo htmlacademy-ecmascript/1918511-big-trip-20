@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { WAYPOINT_OPTIONS, TRAVEL_WAYPOINTS } from '../const.js';
 import { getRandomElem } from '../utils.js';
 
@@ -36,7 +35,7 @@ WAYPOINT_OPTIONS.forEach((elem) => {
 export const getRandomData = () => {
   const type = getRandomElem(WAYPOINT_OPTIONS);
   return {
-    'id': nanoid(),
+    'id': 123,
     'basePrice': Math.floor(Math.random() * 1000),
     // 'dateFrom': '2019-07-10T22:55:56.845Z',
     'dateFrom': new Date(2021, getRandomArbitrary(10, 11) , getRandomArbitrary(20, 26) , getRandomArbitrary(0, 24) ,getRandomArbitrary(0, 60)),

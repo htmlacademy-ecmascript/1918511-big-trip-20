@@ -56,4 +56,22 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
+
+export const Urls = {
+  MAIN: 'https://20.objects.pages.academy/big-trip',
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
+};
+
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  POST: 'POST',
+};
+
+export const AUTHORIZATION = 'Basic erth324512saa';
+
