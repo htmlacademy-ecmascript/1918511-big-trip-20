@@ -43,7 +43,7 @@ export default class WaypointModel extends Observable {
         this.#destinations,
         this.#offers,
       );
-      // console.log(this.#offers);
+      // console.log('init log', this.#offers);
     } catch(err) {
       this.#waypoints = [];
     }
