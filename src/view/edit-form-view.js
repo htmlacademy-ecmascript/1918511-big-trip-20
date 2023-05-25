@@ -167,9 +167,6 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    // console.log(this._state);
-    // EditFormView.parseStateToWaypoint(this._state);
-    // console.log(this._state);
     this.#handleSubmit(EditFormView.parseStateToWaypoint(this._state));
   };
 

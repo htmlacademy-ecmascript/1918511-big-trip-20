@@ -80,7 +80,6 @@ export default class SingleWaypointPresenter {
     if (this.#state === Mode.OPENED) {
       this.#waypointEditComponent.updateElement({
         isDisabled: true,
-        // isSaving: true,
         isDeleting: true,
       });
     }
@@ -126,10 +125,10 @@ export default class SingleWaypointPresenter {
       UpdateType.MINOR,
       point,
     );
-    // this.replaceEditToInfo();
   };
 
   #formCancelHandler = () => {
+    this.#waypointEditComponent.reset(this.#elem);
     this.resetView();
   };
 
