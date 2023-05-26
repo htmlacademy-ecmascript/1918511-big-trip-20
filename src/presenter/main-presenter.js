@@ -74,6 +74,12 @@ export default class MainPresenter {
     return filteredPoints;
   }
 
+  createWaypoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
+    this.#newPointPresenter.init();
+  }
+
   #renderFilters() {
     const filtersPresenter = new FilterPresenter({
       filterContainer: this.#tripControlsFilters,
@@ -210,10 +216,4 @@ export default class MainPresenter {
         break;
     }
   };
-
-  createWaypoint() {
-    this.#currentSortType = SortType.DAY;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
-    this.#newPointPresenter.init();
-  }
 }

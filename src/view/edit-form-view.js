@@ -16,7 +16,7 @@ function createEditForm(data, isNew, model) {
   <span class="visually-hidden">Open event</span>
 </button>`;
 
-  const offersModelInfo = model.offers.find((tip) => tip.type === type);
+  const offersModelInfo = model.offers.find((option) => option.type === type);
   const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
 
   const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
