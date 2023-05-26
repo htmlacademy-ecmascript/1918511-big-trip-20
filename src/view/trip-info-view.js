@@ -5,7 +5,6 @@ import { humanizeDate } from '../utils.js';
 function createTripInfoElement(model) {
   const firstPointName = model.points[0].destination.name;
   const lastPointName = model.points[model.points.length - 1].destination.name;
-  const middlePointName = model.points[1].destination.name;
 
   const isSameMonth = dayjs(model.points[0].dateFrom).month() === dayjs(model.points[model.points.length - 1].dateTo).month();
 
@@ -16,7 +15,7 @@ function createTripInfoElement(model) {
 
   return `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
-    <h1 class="trip-info__title">${firstPointName} &mdash; ${model.points.length > 3 ? '. . .' : middlePointName} &mdash; ${lastPointName}</h1>
+    <h1 class="trip-info__title"> ${model.points.length > 3 ? `${firstPointName} &mdash; . . . &mdash; ${lastPointName}` : model.points.map((elem) => elem.destination.name).join(' &mdash; ')} </h1>
 
     <p class="trip-info__dates">${startingDate}&nbsp;&mdash;&nbsp;${endingDate}</p>
   </div>
