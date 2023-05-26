@@ -12,7 +12,7 @@ function createTripInfoElement(model) {
   const startingDate = humanizeDate(model.points[0].dateFrom, `${isSameMonth ? 'MMM DD' : 'DD MMM'}`);
   const endingDate = humanizeDate(model.points[model.points.length - 1].dateTo, `${isSameMonth ? 'DD' : 'DD MMM'}`);
 
-  const totalPrice = model.points.reduce((sum, elem) => (sum += elem.basePrice), 0);
+  const totalPrice = model.points.reduce((accumulator, currentValue) => (accumulator += currentValue.basePrice), 0);
 
   return `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">

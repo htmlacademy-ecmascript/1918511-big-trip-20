@@ -20,8 +20,8 @@ function createEditForm(data, isNew, model) {
   const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
 
   const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-<label class="event__offer-label" for="event-offer-luggage-1">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" type="checkbox" name="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}">
+<label class="event__offer-label" for="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1">
   <span class="event__offer-title">${elem.title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${elem.price}</span>
