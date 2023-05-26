@@ -8,7 +8,6 @@ const NoEventsTextType = {
   [FiltersType.PRESENT]: 'There are no present events now',
 };
 
-
 function createNotification(filterType) {
   const noEventsTextValue = NoEventsTextType[filterType];
 

@@ -161,6 +161,12 @@ export default class EditFormView extends AbstractStatefulView {
     }
   }
 
+  reset(waypoint) {
+    this.updateElement(
+      EditFormView.parseWaypointToState(waypoint)
+    );
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleSubmit(EditFormView.parseStateToWaypoint(this._state));
@@ -270,12 +276,6 @@ export default class EditFormView extends AbstractStatefulView {
       .querySelector('.event__input--price')
       .addEventListener('change', this.#formPriceChangeHandler);
     this.#setDatepicker();
-  }
-
-  reset(waypoint) {
-    this.updateElement(
-      EditFormView.parseWaypointToState(waypoint)
-    );
   }
 
   static parseStateToWaypoint(waypoint) {
