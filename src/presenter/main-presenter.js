@@ -17,8 +17,8 @@ export default class MainPresenter {
   #tripEventsSection = null;
   #sortComponent = null;
 
+  #infoViewComponent = null;
   #eventComponent = new EventsListView();
-  #infoViewComponent = new TripInfoView();
   #loadingComponent = new LoadingView();
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -123,6 +123,7 @@ export default class MainPresenter {
   }
 
   #renderWaypoints() {
+    this.#infoViewComponent = new TripInfoView({waypointModel: this.#waypointModel});
     if (this.points.length) {
       render(this.#infoViewComponent, this.#tripMain, RenderPosition.AFTERBEGIN);
       this.#renderSortOptions();
