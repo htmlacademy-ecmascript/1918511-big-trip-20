@@ -50,6 +50,9 @@ export default class TripSortView extends AbstractView {
     if(evt.target.tagName !== 'LABEL') {
       return;
     }
+    if(evt.target.dataset.sortType === SortType.EVENT || evt.target.dataset.sortType === SortType.OFFERS) {
+      return;
+    }
 
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
