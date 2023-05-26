@@ -6,7 +6,6 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 function createEditForm(data, isNew, model) {
   const { destination, type, dateFrom, dateTo} = data;
-
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
   ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`).join('')}
@@ -27,7 +26,6 @@ function createEditForm(data, isNew, model) {
   <span class="event__offer-price">${elem.price}</span>
 </label>
 </div>`).join('')}</div>` : '';
-
 
   return /*html*/`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -75,7 +73,7 @@ function createEditForm(data, isNew, model) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode('')}">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(`${data.basePrice}`)}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">${data.isSaving ? 'Saving...' : 'Save'}</button>
@@ -85,8 +83,6 @@ function createEditForm(data, isNew, model) {
 
       ${isNew ? '' : rollupBtn}
     </header>
-
-
 
     <section class="event__details">
       <section class="event__section  event__section--offers">
@@ -199,6 +195,12 @@ export default class EditFormView extends AbstractStatefulView {
     }
   };
 
+  #formPriceChangeHandler = (evt) => {
+    this.updateElement({
+      basePrice: Number(evt.target.value)
+    });
+  };
+
   #fromDateSubmitHandler = ([userDateFrom]) => {
     this.updateElement({
       dateFrom: userDateFrom,
@@ -217,7 +219,7 @@ export default class EditFormView extends AbstractStatefulView {
         this.element.querySelector('#event-start-time-1'),
         {
           enableTime: true,
-          // time_24hr: true, // линтер
+          time_24hr: true, // eslint-disable-line
           maxDate: this._state.dateTo,
           dateFormat: 'd/m/y H:i',
           defaultDate: this._state.dateFrom,
@@ -230,7 +232,7 @@ export default class EditFormView extends AbstractStatefulView {
         this.element.querySelector('#event-end-time-1'),
         {
           enableTime: true,
-          // time_24hr: true, // линтер
+          time_24hr: true, // eslint-disable-line
           minDate:this._state.dateFrom,
           dateFormat: 'd/m/y H:i',
           defaultDate: this._state.dateTo,
@@ -264,6 +266,9 @@ export default class EditFormView extends AbstractStatefulView {
     this.element
       .querySelector('.event__input--destination')
       .addEventListener('change', this.#formDestChangeHandler);
+    this.element
+      .querySelector('.event__input--price')
+      .addEventListener('change', this.#formPriceChangeHandler);
     this.#setDatepicker();
   }
 
