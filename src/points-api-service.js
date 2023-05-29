@@ -70,6 +70,7 @@ export default class PointsApiService extends ApiService {
     delete adaptedPoint.dateTo;
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.basePrice;
+    delete adaptedPoint.waypoint;
 
     return adaptedPoint;
   }

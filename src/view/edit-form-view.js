@@ -19,14 +19,13 @@ function createEditForm(data, isNew, model) {
   const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
 
   const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" type="checkbox" name="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}">
-<label class="event__offer-label" for="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" type="checkbox"  data-offer-id="${elem.id}" name="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}">
+<label class="event__offer-label" for="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" >
   <span class="event__offer-title">${elem.title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${elem.price}</span>
 </label>
 </div>`).join('')}</div>` : '';
-
   return /*html*/`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -121,6 +120,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.#waypointModel = waypointModel;
     if (waypoint) {
       this._setState(EditFormView.parseWaypointToState(waypoint));
+      // console.log(waypoint);
     } else {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);
@@ -140,10 +140,12 @@ export default class EditFormView extends AbstractStatefulView {
 
       this._setState(EditFormView.parseWaypointToState(fillerData));
     }
+    console.log(this._state);
     this.#handleSubmit = onFormSubmit;
     this.#handleCancel = onFormCancel;
     this.#handleDelete = onFormDelete;
     this.#isNew = isNew;
+
 
     this._restoreHandlers();
   }
@@ -190,7 +192,8 @@ export default class EditFormView extends AbstractStatefulView {
   #formEventChangeHandler = (evt) => {
     if(evt.target.tagName === 'INPUT') {
       this.updateElement({
-        type: evt.target.value
+        type: evt.target.value,
+        offers: [],
       });
     }
   };
@@ -220,6 +223,26 @@ export default class EditFormView extends AbstractStatefulView {
     this.updateElement({
       dateFrom: userDateFrom,
     });
+  };
+
+  #offerClickHandler = (evt) => {
+    evt.preventDefault();
+
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this.updateElement({
+      waypoint: {
+        offers: checkedBoxes.map((elem) => elem.dataset.offerId)
+      }
+    });
+
+    document.querySelectorAll('.event__offer-checkbox').forEach((elem) => {
+      if (this._state.waypoint.offers.find((el) => el === elem.dataset.offerId)) {
+        elem.setAttribute('checked', true);
+      }
+    });
+    console.log(this._state);
+
   };
 
   #toDateSubmitHandler = ([userDateTo]) => {
@@ -288,6 +311,11 @@ export default class EditFormView extends AbstractStatefulView {
     this.element
       .querySelector('.event__input--price')
       .addEventListener('change', this.#formPriceChangeHandler);
+
+    if(this.element.querySelector('.event__available-offers')){
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerClickHandler);
+    }
+
     this.#setDatepicker();
   }
 
@@ -296,7 +324,7 @@ export default class EditFormView extends AbstractStatefulView {
     delete point.isDisabled;
     delete point.isSaving;
     delete point.isDeleting;
-
+    console.log(point);
     return point;
   }
 
