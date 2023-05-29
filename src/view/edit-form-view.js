@@ -42,7 +42,7 @@ function createEditForm(data, isNew, model) {
             <legend class="visually-hidden">Event type</legend>
 
     ${model.offers.map((elem) => `<div class="event__type-item">
-            <input id="event-type-${elem.type.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
+            <input id="event-type-${elem.type.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}" ${elem.type === type ? 'checked' : ''}>
             <label class="event__type-label  event__type-label--${elem.type.toLocaleLowerCase()}" for="event-type-${elem.type.toLocaleLowerCase()}-1">${ucFirst(elem.type)}</label>
           </div>`).join('')}
 
@@ -94,7 +94,8 @@ function createEditForm(data, isNew, model) {
       </section>
 
       <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      ${destination.name ? '<h3 class="event__section-title  event__section-title--destination">Destination</h3>' : ''}
+
         <p class="event__destination-description">${destination.description}</p>
 
         ${isNew ? pics : ''}
@@ -124,10 +125,14 @@ export default class EditFormView extends AbstractStatefulView {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);
       const fillerData = {
-        basePrice: 500,
+        basePrice: '',
         dateFrom: dateFrom,
         dateTo: new Date(),
-        destination: { ...this.#waypointModel.destinations[0] },
+        destination: {
+          name: '',
+          pictures: [],
+          description: '',
+        },
         isFavourite: false,
         offers: [...this.#waypointModel.offers[0].offers],
         type: this.#waypointModel.offers[0].type,
