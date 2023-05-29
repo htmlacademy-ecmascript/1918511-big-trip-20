@@ -5,7 +5,7 @@ const ZERO = 0;
 
 const humanizeDate = (anyDate, dateFormat) => anyDate ? dayjs(anyDate).format(dateFormat) : '';
 
-const countDates = (dateFrom, dateTo) =>{
+const humanizeDuration = (dateFrom, dateTo) =>{
   const daysDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'day', true);
   const days = Math.floor(daysDiff);
   const hoursDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'hour', true);
@@ -21,8 +21,6 @@ const countDates = (dateFrom, dateTo) =>{
 
   return `${days}D ${hours}H ${minutes}M`;
 };
-
-const getRandomElem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 // Dates sort
 function getWeight(optionA, optionB) {
@@ -77,4 +75,4 @@ function ucFirst(str) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export {getRandomElem, humanizeDate, countDates , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual, filter, ucFirst};
+export { humanizeDate, humanizeDuration , getWeight , sortWaypointsByDate, sortWaypointsByTime, sortWaypointsByPrice, isDatesEqual, filter, ucFirst };
