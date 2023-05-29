@@ -42,11 +42,11 @@ export default class TripFiltersView extends AbstractView {
     this.#handleChangeFilter = onFilterTypeChange;
     this.#waypointModel = waypointModel;
 
-    this.element.onchange = (evt) => {
+    this.element.addEventListener('change', (evt) => {
       if (evt.target.tagName === 'INPUT') {
         this.#handleChangeFilter(evt.target.value);
       }
-    };
+    });
   }
 
   get template() {
