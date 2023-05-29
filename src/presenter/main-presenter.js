@@ -141,7 +141,7 @@ export default class MainPresenter {
   }
 
   #renderNoPoints() {
-    this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType});
+    this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType, waypointModel: this.#waypointModel});
     render(this.#notiComponent, this.#eventComponent.element);
     remove(this.#loadingComponent);
   }

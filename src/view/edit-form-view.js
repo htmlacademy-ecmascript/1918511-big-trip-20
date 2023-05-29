@@ -208,12 +208,20 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   #fromDateSubmitHandler = ([userDateFrom]) => {
+    if (userDateFrom === undefined) {
+      this.#setDatepicker();
+      return;
+    }
     this.updateElement({
       dateFrom: userDateFrom,
     });
   };
 
   #toDateSubmitHandler = ([userDateTo]) => {
+    if (userDateTo === undefined) {
+      this.#setDatepicker();
+      return;
+    }
     this.updateElement({
       dateTo: userDateTo,
     });

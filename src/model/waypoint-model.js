@@ -1,18 +1,18 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
-// import { getRandomData } from '../mock/mocks.js';
 
-// const WAYPOINTS_COUNT = 5;
 
 export default class WaypointModel extends Observable {
   #pointsApiService = null;
   #waypoints = [];
   #offers = [];
   #destinations = [];
+  #handleError = null;
 
-  constructor ({pointsApiService}) {
+  constructor ({pointsApiService, handleError}) {
     super();
     this.#pointsApiService = pointsApiService;
+    this.#handleError = handleError;
   }
 
   get points() {
@@ -41,6 +41,7 @@ export default class WaypointModel extends Observable {
       this.#waypoints = [];
       this.#destinations = [];
       this.#offers = [];
+      this.#handleError();
     }
     this._notify(UpdateType.INIT);
   }
