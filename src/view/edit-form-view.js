@@ -8,7 +8,7 @@ function createEditForm(data, isNew, model) {
   const { destination, type, dateFrom, dateTo} = data;
   const pics = destination.pictures.length > 0
     ? `<div class="event__photos-container"><div class="event__photos-tape">
-  ${destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`).join('')}
+  ${destination.pictures.map((elem) => `<img class="event__photo" src=${he.encode(`${elem.src}`)} alt="Event photo">`).join('')}
   </div></div>` : '';
 
   const rollupBtn = `<button class="event__rollup-btn" type="button">
@@ -18,21 +18,33 @@ function createEditForm(data, isNew, model) {
   const offersModelInfo = model.offers.find((option) => option.type === type);
   const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
 
-  const offersList = offersModelInfo.offers.length ? `<div class="event__available-offers">${offersModelInfo.offers.map((elem) => `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" type="checkbox"  data-offer-id="${elem.id}" name="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}">
-<label class="event__offer-label" for="event-offer-${elem.title.replaceAll(' ', '').toLowerCase()}-1" >
-  <span class="event__offer-title">${elem.title}</span>
-  &plus;&euro;&nbsp;
-  <span class="event__offer-price">${elem.price}</span>
-</label>
-</div>`).join('')}</div>` : '';
+  const offersList = offersModelInfo.offers.length
+    ? `<div class="event__available-offers">${offersModelInfo.offers
+      .map((elem) => {
+        const isChecked = data.offers.find(
+          (oneOfferOfData) => oneOfferOfData.id === elem.id
+        );
+        return `<div class="event__offer-selector">
+            <input ${isChecked ? 'checked' : ''}
+             class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+            <label data-id="${he.encode(`${elem.id}`)}" class="event__offer-label" for="event-offer-luggage-1">
+              <span class="event__offer-title">${he.encode(`${elem.title}`)}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${he.encode(`${elem.price}`)}</span>
+            </label>
+            </div>`;
+      })
+      .join('')}</div>`
+    : '';
+
+
   return /*html*/`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${he.encode(`${type}`)}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -55,7 +67,7 @@ function createEditForm(data, isNew, model) {
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(`${destination.name}`)}" list="destination-list-1">
         <datalist id="destination-list-1">
-        ${model.destinations.map((elem) => `<option value="${elem.name}"></option>`)}
+        ${model.destinations.map((elem) => `<option value="${he.encode(`${elem.name}`)}"></option>`)}
         </datalist>
       </div>
 
@@ -86,7 +98,7 @@ function createEditForm(data, isNew, model) {
     <section class="event__details">
       <section class="event__section  event__section--offers">
 
-      ${offersModelInfo.offers.length > 0 ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
+      ${data.offers.length > 0 ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
 
       ${offersList}
 
@@ -95,7 +107,7 @@ function createEditForm(data, isNew, model) {
       <section class="event__section  event__section--destination">
       ${destination.name ? '<h3 class="event__section-title  event__section-title--destination">Destination</h3>' : ''}
 
-        <p class="event__destination-description">${destination.description}</p>
+        <p class="event__destination-description">${he.encode(`${destination.description}`)}</p>
 
         ${isNew ? pics : ''}
 
@@ -134,13 +146,12 @@ export default class EditFormView extends AbstractStatefulView {
           description: '',
         },
         isFavourite: false,
-        offers: [...this.#waypointModel.offers[0].offers],
+        offers: [],
         type: this.#waypointModel.offers[0].type,
       };
 
       this._setState(EditFormView.parseWaypointToState(fillerData));
     }
-    console.log(this._state);
     this.#handleSubmit = onFormSubmit;
     this.#handleCancel = onFormCancel;
     this.#handleDelete = onFormDelete;
@@ -228,20 +239,54 @@ export default class EditFormView extends AbstractStatefulView {
   #offerClickHandler = (evt) => {
     evt.preventDefault();
 
-    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+    if (evt.target.tagName === 'LABEL') {
+      const idOffer = evt.target.dataset.id;
+      const currentTypeOffers = this.#waypointModel.offers.find((elem) => elem.type === this._state.type);
 
-    this.updateElement({
-      waypoint: {
-        offers: checkedBoxes.map((elem) => elem.dataset.offerId)
-      }
-    });
+      const isActiveOffer = this._state.offers.find((elem) => elem.id === idOffer);
 
-    document.querySelectorAll('.event__offer-checkbox').forEach((elem) => {
-      if (this._state.waypoint.offers.find((el) => el === elem.dataset.offerId)) {
-        elem.setAttribute('checked', true);
+      if (isActiveOffer) {
+        const newOffersArray = this._state.offers.filter((elem) => elem.id !== idOffer);
+        this.updateElement({
+          offers: newOffersArray,
+        });
       }
-    });
-    console.log(this._state);
+
+      if (!isActiveOffer) {
+        const newOffer = currentTypeOffers.offers.find((elem) => elem.id === idOffer);
+
+        const newOffersArray = [...this._state.offers];
+        newOffersArray.push(newOffer);
+        this.updateElement({
+          offers: newOffersArray,
+        });
+      }
+
+    }
+    if (evt.target.tagName === 'SPAN') {
+      const idOffer = evt.target.parentElement.dataset.id;
+      const currentTypeOffers = this.#waypointModel.offers.find((elem) => elem.type === this._state.type);
+
+      const isActiveOffer = this._state.offers.find((elem) => elem.id === idOffer);
+
+      if (isActiveOffer) {
+        const newOffersArray = this._state.offers.filter((elem) => elem.id !== idOffer);
+        this.updateElement({
+          offers: newOffersArray,
+        });
+      }
+
+      if (!isActiveOffer) {
+        const newOffer = currentTypeOffers.offers.find((elem) => elem.id === idOffer);
+
+        const newOffersArray = [...this._state.offers];
+        newOffersArray.push(newOffer);
+        this.updateElement({
+          offers: newOffersArray,
+        });
+      }
+
+    }
 
   };
 
@@ -312,8 +357,8 @@ export default class EditFormView extends AbstractStatefulView {
       .querySelector('.event__input--price')
       .addEventListener('change', this.#formPriceChangeHandler);
 
-    if(this.element.querySelector('.event__available-offers')){
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerClickHandler);
+    if (this.element.querySelector('.event__available-offers')){
+      this.element.querySelector('.event__available-offers').addEventListener('click', this.#offerClickHandler);
     }
 
     this.#setDatepicker();
@@ -324,7 +369,6 @@ export default class EditFormView extends AbstractStatefulView {
     delete point.isDisabled;
     delete point.isSaving;
     delete point.isDeleting;
-    console.log(point);
     return point;
   }
 

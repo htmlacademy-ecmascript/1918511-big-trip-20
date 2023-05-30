@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import { humanizeDate } from '../utils.js';
+import he from 'he';
 
 function createTripInfoElement(model) {
 
@@ -17,13 +18,13 @@ function createTripInfoElement(model) {
 
     return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
-      <h1 class="trip-info__title"> ${model.points.length > 3 ? `${firstPointName} &mdash; . . . &mdash; ${lastPointName}` : model.points.map((elem) => elem.destination.name).join(' &mdash; ')} </h1>
+      <h1 class="trip-info__title"> ${model.points.length > 3 ? `${he.encode(`${firstPointName}`)} &mdash; . . . &mdash; ${he.encode(`${lastPointName}`)}` : model.points.map((elem) => elem.destination.name).join(' &mdash; ')} </h1>
 
       <p class="trip-info__dates">${startingDate}&nbsp;&mdash;&nbsp;${endingDate}</p>
     </div>
 
     <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${he.encode(`${totalPrice}`)}</span>
     </p>
   </section>`;
   }
