@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { FILTERS_OPTIONS } from '../const.js';
 import { filter } from '../utils.js';
+import he from 'he';
 
 function createTripFiltersElement({currentFilter, model}) {
   const filtersList = FILTERS_OPTIONS.map(
@@ -12,16 +13,16 @@ function createTripFiltersElement({currentFilter, model}) {
         ${filter[elem](model.points).length ? '' : 'disabled'}
         ${elem === currentFilter ? 'checked' : ''}
         name="trip-filter"
-        value="${elem}"
+        value="${he.encode(`${elem}`)}"
       />
-      <label class="trip-filters__filter-label" for="filter-${elem}">
+      <label class="trip-filters__filter-label" for="filter-${he.encode(`${elem}`)}">
         ${elem}
       </label>
     </div>`
   ).join('');
 
   return /*html*/ `<form class="trip-filters" action="#" method="get">
-      ${filtersList}
+  ${filtersList}
       <button class="visually-hidden" type="submit">
         Accept filter
       </button>
@@ -42,11 +43,11 @@ export default class TripFiltersView extends AbstractView {
     this.#handleChangeFilter = onFilterTypeChange;
     this.#waypointModel = waypointModel;
 
-    this.element.onchange = (evt) => {
+    this.element.addEventListener('change', (evt) => {
       if (evt.target.tagName === 'INPUT') {
         this.#handleChangeFilter(evt.target.value);
       }
-    };
+    });
   }
 
   get template() {

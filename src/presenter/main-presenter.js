@@ -141,7 +141,7 @@ export default class MainPresenter {
   }
 
   #renderNoPoints() {
-    this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType});
+    this.#notiComponent = new NotificationNewEventView({filterType: this.#filterType, waypointModel: this.#waypointModel});
     render(this.#notiComponent, this.#eventComponent.element);
     remove(this.#loadingComponent);
   }
@@ -150,10 +150,16 @@ export default class MainPresenter {
     render(this.#loadingComponent, this.#eventComponent.element);
   }
 
-  #clearPoints () {
+  #clearPoints (resetSortType = false) {
+
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+
+    if (resetSortType === true) {
+      this.#currentSortType = SortType.DAY;
+    }
+
 
     remove(this.#notiComponent);
     remove(this.#infoViewComponent);
@@ -197,17 +203,21 @@ export default class MainPresenter {
     this.#uiBlocker.unblock();
   };
 
+  #rerenderList = () => {
+    this.#clearPoints();
+    this.#renderWaypoints();
+  };
+
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this.#clearPoints();
-        this.#renderWaypoints();
+        this.#rerenderList();
         break;
       case UpdateType.MAJOR:
-        this.#clearPoints({resetSortType: true});
+        this.#clearPoints(true);
         this.#renderWaypoints();
         break;
       case UpdateType.INIT:

@@ -11,7 +11,8 @@ const tripControlsFiltersElement = document.querySelector('.trip-controls__filte
 const tripEventsSection = document.querySelector('.trip-events');
 
 const waypointModel = new WaypointModel({
-  pointsApiService: new PointsApiService(Urls.MAIN , AUTHORIZATION)
+  pointsApiService: new PointsApiService(Urls.MAIN , AUTHORIZATION),
+  handleError: unableNewTaskButton,
 });
 const filterModel = new FilterModel();
 const mainPresenter = new MainPresenter({tripMain: tripMainElement,
@@ -28,6 +29,10 @@ const newPointButtonComponent = new NewEventButtonView({
 
 function handleNewTaskFormClose() {
   newPointButtonComponent.element.disabled = false;
+}
+
+function unableNewTaskButton() {
+  newPointButtonComponent.element.disabled = true;
 }
 
 function handleNewTaskButtonClick() {
