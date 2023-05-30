@@ -109,7 +109,7 @@ function createEditForm(data, isNew, model) {
 
         <p class="event__destination-description">${he.encode(`${destination.description}`)}</p>
 
-        ${isNew ? pics : ''}
+        ${pics}
 
       </section>
     </section>
@@ -132,7 +132,6 @@ export default class EditFormView extends AbstractStatefulView {
     this.#waypointModel = waypointModel;
     if (waypoint) {
       this._setState(EditFormView.parseWaypointToState(waypoint));
-      // console.log(waypoint);
     } else {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);

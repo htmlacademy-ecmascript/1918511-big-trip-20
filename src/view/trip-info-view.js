@@ -16,6 +16,12 @@ function createTripInfoElement(model) {
 
     const totalPrice = model.points.reduce((accumulator, currentValue) => (accumulator += currentValue.basePrice), 0);
 
+    const totalOffersPrice = model.points.reduce((accumulator, currentValue) => {
+      const sum = currentValue.offers.reduce((acc, current) => (acc += current.price), 0);
+      accumulator += sum;
+      return accumulator;
+    }, 0);
+
     return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title"> ${model.points.length > 3 ? `${he.encode(`${firstPointName}`)} &mdash; . . . &mdash; ${he.encode(`${lastPointName}`)}` : model.points.map((elem) => elem.destination.name).join(' &mdash; ')} </h1>
@@ -24,7 +30,7 @@ function createTripInfoElement(model) {
     </div>
 
     <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${he.encode(`${totalPrice}`)}</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${he.encode(`${totalPrice + totalOffersPrice}`)}</span>
     </p>
   </section>`;
   }
